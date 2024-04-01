@@ -187,6 +187,16 @@ void Roode::updateCounter(int delta) {
   call.set_value(next);
   call.perform();
 }
+void Roode::resetCounter() {
+  if (this->people_counter == nullptr) {
+    return;
+  }
+  float next = 0;
+  ESP_LOGI(TAG, "Resetting people count to 0");
+  auto call = this->people_counter->make_call();
+  call.set_value(next);
+  call.perform();
+}
 void Roode::recalibration() { calibrate_zones(); }
 
 const RangingMode *Roode::determine_raning_mode(uint16_t average_entry_zone_distance,
