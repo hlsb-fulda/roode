@@ -335,3 +335,65 @@ lower right.
 Thank you very much for you sponsorship!
 
 - sunshine-hass
+
+## Contributor onboarding
+
+The diagram below highlights how the core firmware surfaces diagnostics to ESPHome and downstream automations.
+
+```mermaid
+graph TD
+    VL53[Vl53L1X ToF Sensor]
+    Roode[Roode firmware]
+
+    subgraph ESPHome sensors
+        DistanceEntry[distance_entry]
+        DistanceExit[distance_exit]
+        MinThresholdEntry[min_threshold_entry]
+        MaxThresholdEntry[max_threshold_entry]
+        MinThresholdExit[min_threshold_exit]
+        MaxThresholdExit[max_threshold_exit]
+        ROIHeightEntry[roi_height_entry]
+        ROIWidthEntry[roi_width_entry]
+        ROIHeightExit[roi_height_exit]
+        ROIWidthExit[roi_width_exit]
+        StatusSensor[sensor_status]
+        Counter[number.people_counter]
+    end
+
+    subgraph Home automation
+        HA[Home Assistant / MQTT consumers]
+    end
+
+    VL53 --> Roode
+    Roode --> DistanceEntry
+    Roode --> DistanceExit
+    Roode --> MinThresholdEntry
+    Roode --> MaxThresholdEntry
+    Roode --> MinThresholdExit
+    Roode --> MaxThresholdExit
+    Roode --> ROIHeightEntry
+    Roode --> ROIWidthEntry
+    Roode --> ROIHeightExit
+    Roode --> ROIWidthExit
+    Roode --> StatusSensor
+    Roode --> Counter
+
+    DistanceEntry --> HA
+    DistanceExit --> HA
+    MinThresholdEntry --> HA
+    MaxThresholdEntry --> HA
+    MinThresholdExit --> HA
+    MaxThresholdExit --> HA
+    ROIHeightEntry --> HA
+    ROIWidthEntry --> HA
+    ROIHeightExit --> HA
+    ROIWidthExit --> HA
+    StatusSensor --> HA
+    Counter --> HA
+```
+
+- **People counter**: `number.people_counter` is the adjustable counter surfaced through `set_people_counter` for downstream logic.
+- **Distance metrics**: `distance_entry` and `distance_exit` expose zone distances (configured by `set_distance_entry` / `set_distance_exit`).
+- **Threshold telemetry**: `min_threshold_*` / `max_threshold_*` diagnostic feeds share detection guardrails via `set_min_threshold_*_sensor` and `set_max_threshold_*_sensor`.
+- **ROI geometry**: `roi_height_entry`, `roi_width_entry`, `roi_height_exit`, and `roi_width_exit` mirror the configured field of view through the respective `set_*_roi_*_sensor` setters.
+- **Status code**: `sensor_status` streams VL53L1X error codes via `set_sensor_status_sensor` so dashboards can alert on hardware faults.
