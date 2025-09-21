@@ -25,7 +25,7 @@ People counter working with any smart home system which supports ESPHome/MQTT li
   - **Wemos D1 Mini ESP32** <-- Recommended
   - Wemos D1 mini (ESP8266)
   - NodeMCU V2
-- 1x VL53L1X
+- 1x VL53L1X driver that exposes calibration hooks and applies the range mode supplied by Roode
   - **Pololu** <-- Recommended
   - GY-53
   - Black PCB chinese sensor
@@ -84,6 +84,8 @@ roode:
 ```
 
 This uses the recommended default configuration.
+
+Under the hood, `Roode::calibrateDistance` evaluates recent idle distances to select the appropriate `Ranging::...` mode before commanding the driver.
 
 However, we offer a lot of flexibility. Here's the full configuration spelled out.
 
