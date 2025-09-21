@@ -1,5 +1,7 @@
 #include "zone.h"
 
+#include <vector>
+
 namespace esphome {
 namespace roode {
 
@@ -43,14 +45,14 @@ void Zone::reset_roi(uint8_t default_center) {
 
 void Zone::calibrateThreshold(TofSensor *distanceSensor, int number_attempts) {
   ESP_LOGD(CALIBRATION, "Beginning. zoneId: %d", id);
-  int *zone_distances = new int[number_attempts];
+  std::vector<int> zone_distances(number_attempts);
   int sum = 0;
   for (int i = 0; i < number_attempts; i++) {
     this->readDistance(distanceSensor);
     zone_distances[i] = this->getDistance();
     sum += zone_distances[i];
   };
-  threshold->idle = this->getOptimizedValues(zone_distances, sum, number_attempts);
+  threshold->idle = this->getOptimizedValues(zone_distances.data(), sum, number_attempts);
 
   if (threshold->max_percentage.has_value()) {
     threshold->max = (threshold->idle * threshold->max_percentage.value()) / 100;
