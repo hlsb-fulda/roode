@@ -73,6 +73,8 @@ class Roode : public PollingComponent {
   void set_distance_entry(sensor::Sensor *distance_entry_) { distance_entry = distance_entry_; }
   void set_distance_exit(sensor::Sensor *distance_exit_) { distance_exit = distance_exit_; }
   void set_people_counter(number::Number *counter) { this->people_counter = counter; }
+  void set_people_entered(sensor::Sensor *entered) { this->people_entered = entered; }
+  void set_people_escaped(sensor::Sensor *escaped) { this->people_escaped = escaped; }
   void set_max_threshold_entry_sensor(sensor::Sensor *max_threshold_entry_sensor_) {
     max_threshold_entry_sensor = max_threshold_entry_sensor_;
   }
@@ -108,6 +110,8 @@ class Roode : public PollingComponent {
   sensor::Sensor *distance_entry;
   sensor::Sensor *distance_exit;
   number::Number *people_counter;
+  sensor::Sensor *people_entered;
+  sensor::Sensor *people_escaped;
   sensor::Sensor *max_threshold_entry_sensor;
   sensor::Sensor *max_threshold_exit_sensor;
   sensor::Sensor *min_threshold_entry_sensor;
@@ -120,6 +124,9 @@ class Roode : public PollingComponent {
   binary_sensor::BinarySensor *presence_sensor;
   text_sensor::TextSensor *version_sensor;
   text_sensor::TextSensor *entry_exit_event_sensor;
+
+  uint32_t people_entered_total{0};
+  uint32_t people_escaped_total{0};
 
   VL53L1_Error last_sensor_status = VL53L1_ERROR_NONE;
   VL53L1_Error sensor_status = VL53L1_ERROR_NONE;

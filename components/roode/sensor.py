@@ -6,6 +6,7 @@ from esphome.const import (
     ICON_NEW_BOX,
     ICON_RULER,
     STATE_CLASS_MEASUREMENT,
+    STATE_CLASS_TOTAL_INCREASING,
     UNIT_EMPTY,
     ENTITY_CATEGORY_DIAGNOSTIC,
 )
@@ -24,6 +25,8 @@ CONF_ROI_WIDTH_entry = "roi_width_entry"
 CONF_ROI_HEIGHT_exit = "roi_height_exit"
 CONF_ROI_WIDTH_exit = "roi_width_exit"
 SENSOR_STATUS = "sensor_status"
+PEOPLE_ENTERED = "people_entered"
+PEOPLE_ESCAPED = "people_escaped"
 
 CONFIG_SCHEMA = sensor.sensor_schema().extend(
     {
@@ -102,6 +105,16 @@ CONFIG_SCHEMA = sensor.sensor_schema().extend(
             accuracy_decimals=0,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
         ),
+        cv.Optional(PEOPLE_ENTERED): sensor.sensor_schema(
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            state_class=STATE_CLASS_TOTAL_INCREASING,
+        ),
+        cv.Optional(PEOPLE_ESCAPED): sensor.sensor_schema(
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            state_class=STATE_CLASS_TOTAL_INCREASING,
+        ),
         cv.GenerateID(CONF_ROODE_ID): cv.use_id(Roode),
     }
 )
@@ -142,3 +155,9 @@ async def to_code(config):
     if SENSOR_STATUS in config:
         count = await sensor.new_sensor(config[SENSOR_STATUS])
         cg.add(var.set_sensor_status_sensor(count))
+    if PEOPLE_ENTERED in config:
+        entered = await sensor.new_sensor(config[PEOPLE_ENTERED])
+        cg.add(var.set_people_entered(entered))
+    if PEOPLE_ESCAPED in config:
+        exited = await sensor.new_sensor(config[PEOPLE_ESCAPED])
+        cg.add(var.set_people_escaped(exited))

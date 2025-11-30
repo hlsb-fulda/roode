@@ -23,6 +23,14 @@ void Roode::setup() {
     return;
   }
 
+  if (this->people_entered != nullptr) {
+    this->people_entered->publish_state(this->people_entered_total);
+  }
+
+  if (this->people_escaped != nullptr) {
+    this->people_escaped->publish_state(this->people_escaped_total);
+  }
+
   calibrate_zones();
 }
 
@@ -180,14 +188,23 @@ void Roode::path_tracking(Zone *zone) {
   }
 }
 void Roode::updateCounter(int delta) {
-  if (this->people_counter == nullptr) {
-    return;
+  if (this->people_counter != nullptr) {
+    auto next = this->people_counter->state + (float) delta;
+    ESP_LOGI(TAG, "Updating people count: %d", (int) next);
+    auto call = this->people_counter->make_call();
+    call.set_value(next);
+    call.perform();
   }
-  auto next = this->people_counter->state + (float) delta;
-  ESP_LOGI(TAG, "Updating people count: %d", (int) next);
-  auto call = this->people_counter->make_call();
-  call.set_value(next);
-  call.perform();
+
+  if (this->people_entered != nullptr && delta > 0) {
+    this->people_entered_total += (float) delta;
+    this->people_entered->publish_state(this->people_entered_total);
+  }
+
+  if (this->people_escaped != nullptr && delta < 0) {
+    this->people_escaped_total -= (float) delta;
+    this->people_escaped->publish_state(this->people_escaped_total);
+  }
 }
 void Roode::resetCounter() {
   if (this->people_counter == nullptr) {
