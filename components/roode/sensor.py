@@ -28,7 +28,7 @@ SENSOR_STATUS = "sensor_status"
 PEOPLE_ENTERED = "people_entered"
 PEOPLE_ESCAPED = "people_escaped"
 
-CONFIG_SCHEMA = sensor.sensor_schema().extend(
+CONFIG_SCHEMA = sensor.sensor_schema(sensor.Sensor).extend(
     {
         cv.Optional(CONF_DISTANCE_entry): sensor.sensor_schema(
             icon=ICON_RULER,
